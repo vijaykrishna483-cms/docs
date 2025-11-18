@@ -1,0 +1,222 @@
+---
+title: 'Text-to-Speech'
+description: 'Convert text to natural speech in seconds with Waves TTS API'
+icon: 'waveform'
+---
+<div className="flex justify-center items-center p-5 rounded-xl border mb-5 bg-neutral-100 dark:bg-white/5 dark:border-white/10 border-black/10">
+  <div className="flex items-center gap-1 h-7">
+    {Array.from({ length: 30 }).map((_, i) => {
+      const heights = [3,5,4,7,6,5,8,4,6,5,7,4,6,8,5,7,4,6,5,7,3,5,4,7,6,4,8,6,5,7];
+      return (
+        <div
+          key={i}
+          className="animate-wave bg-black dark:bg-white opacity-90 rounded-md"
+          style={{
+            width: "4px",
+            height: `${heights[i] * 4}px`,
+            animationDelay: `${i * 0.04}s`
+          }}
+        />
+      );
+    })}
+  </div>
+</div>
+
+
+## Transform Text into Voice ⚡
+
+Waves TTS delivers **high-quality, natural-sounding** speech synthesis with ultra-low latency. Perfect for voice assistants, content creation, and accessibility applications.
+
+<CardGroup cols={3}>
+  <Card title="24kHz Audio" icon="headphones" iconType="duotone">
+    Crystal-clear quality
+  </Card>
+  <Card title="40+ Voices" icon="microphone" iconType="duotone">
+    Multiple accents & styles
+  </Card>
+  <Card title="100ms Latency" icon="bolt" iconType="duotone">
+    Lightning-fast synthesis
+  </Card>
+</CardGroup>
+
+---
+
+## API Endpoint
+
+<ParamField path="POST" type="endpoint">
+  ```
+  https://api.waves.com/api/v1/lightning
+  ```
+</ParamField>
+
+<Note>
+  **Using voice clones?** Switch to the `/lightning-large` endpoint and include `"model": "lightning-large"` in your request.
+</Note>
+
+---
+
+## Authentication
+
+Include your API key in the Authorization header:
+
+<CodeGroup>
+```bash Headers
+Authorization: Bearer YOUR_API_KEY
+Content-Type: application/json
+```
+</CodeGroup>
+
+<Tip>
+  Get your API key from the [Waves Dashboard](https://waves.smallest.ai) — it's free to start!
+</Tip>
+
+---
+
+## Quickstart tts Start
+
+<AccordionGroup>
+  <Accordion title="Python SDK" icon="python" defaultOpen>
+    <Steps>
+      <Step title="Install">
+        ```bash
+        pip install smallestai
+        ```
+      </Step>
+      <Step title="Set API Key">
+        ```bash
+        export SMALLEST_API_KEY=your_api_key_here
+        ```
+      </Step>
+      <Step title="Generate Speech">
+        ```python
+        from smallestai.waves import WavesClient
+
+        def main():
+            client = WavesClient(api_key="SMALLEST_API_KEY")
+            audio = client.synthesize(
+                "Hello, this is a test for sync synthesis function.",
+            )
+            with open("sync_synthesize.wav", "wb") as f:
+                f.write(audio)
+
+        if __name__ == "__main__":
+            main()
+        ```
+      </Step>
+    </Steps>
+  </Accordion>
+
+  <Accordion title="cURL" icon="terminal">
+    ```bash
+    curl -X POST "https://api.waves.com/api/v1/lightning" \
+      -H "Authorization: Bearer YOUR_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "text": "Welcome to Waves TTS!",
+        "voice_id": "emily",
+        "sample_rate": 24000,
+        "speed": 1.0,
+        "language": "en",
+        "output_format": "wav"
+      }' \
+      --output speech.wav
+    ```
+  </Accordion>
+
+  <Accordion title="JavaScript" icon="js">
+    ```javascript
+    const response = await fetch('https://api.waves.com/api/v1/lightning', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer YOUR_API_KEY',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        text: 'Welcome to Waves TTS!',
+        voice_id: 'emily',
+        sample_rate: 24000,
+        speed: 1.0,
+        language: 'en',
+        output_format: 'wav'
+      })
+    });
+
+    const audioBuffer = await response.arrayBuffer();
+    // Save or play the audio
+    ```
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Sample Response
+
+<ResponseField name="audio" type="binary">
+  Returns a binary audio file in the specified format (WAV, MP3, PCM, or μ-law)
+</ResponseField>
+
+<CodeGroup>
+```bash Response Headers
+Content-Type: audio/wav
+Content-Length: 144044
+```
+
+```text Success
+✅ Audio file generated successfully
+📦 File size: ~140KB for 3 seconds
+🎵 Format: 24kHz, 16-bit, mono WAV
+```
+</CodeGroup>
+
+---
+
+## Key Parameters
+
+<ParamField body="text" type="string" required>
+  The text you want to convert to speech (max 5000 characters)
+</ParamField>
+
+<ParamField body="voice_id" type="string" default="emily">
+  Voice identifier — browse [40+ voices](https://waves.smallest.ai/voices) or use your clones
+</ParamField>
+
+<ParamField body="speed" type="float" default="1.0">
+  Speech rate multiplier (0.5 = half speed, 2.0 = double speed)
+</ParamField>
+
+<ParamField body="output_format" type="string" default="wav">
+  Audio format: `wav`, `mp3`, `pcm`, or `mulaw`
+</ParamField>
+
+<ParamField body="language" type="string" default="en">
+  Language code — supports 20+ languages ([see all](https://waves.smallest.ai/languages))
+</ParamField>
+
+---
+
+## Pro Tips 💡
+
+<CardGroup cols={2}>
+  <Card title="Batch Processing" icon="layer-group">
+    For multiple texts, use **async synthesis** to process concurrently and save time
+  </Card>
+  <Card title="Custom Pronunciation" icon="spell-check">
+    Use [pronunciation dictionaries](/tts/pronunciation) for brand names and technical terms
+  </Card>
+  <Card title="Real-Time Streaming" icon="satellite-dish">
+    Need instant feedback? Try [Streaming TTS](/tts/streaming) for word-by-word output
+  </Card>
+  <Card title="Voice Cloning" icon="clone">
+    Create custom voices from 30 seconds of audio with [Voice Cloning](/tts/voice-cloning)
+  </Card>
+</CardGroup>
+
+---
+
+<Check>
+  **You're all set!** Start building amazing voice experiences with Waves TTS.
+</Check>
+
+---
+
+<Snippet file="support-footer.mdx" />
